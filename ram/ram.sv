@@ -33,9 +33,9 @@ module ram
 
         mem[0] = 12'h000;
         mem[1] = 12'h001;
-        mem[2] = 12'h000;// not-valid pixed
-        mem[3] = 12'h000;// not-valid pixed
-        mem[4] = 12'h004;
+        mem[2] = 12'h002;
+        mem[3] = 12'h003;
+        mem[4] = 12'h000;//not-valid pixel
         mem[5] = 12'h005;
         mem[6] = 12'h006;
         mem[7] = 12'h007;
@@ -82,9 +82,9 @@ module ram
         mem[48] = 12'h030;
         mem[49] = 12'h031;
         mem[50] = 12'h032;
-        mem[51] = 12'h033;
+        mem[51] = 12'h000;//not-valid pixel
         mem[52] = 12'h034;
-        mem[53] = 12'h035;
+        mem[53] = 12'h000;//not-valid pixel
         mem[54] = 12'h036;
         mem[55] = 12'h037;
         mem[56] = 12'h038;
@@ -134,7 +134,7 @@ module ram
         mem[100] = 12'h064;
         mem[101] = 12'h065;
         mem[102] = 12'h066;
-        mem[103] = 12'h067;
+        mem[103] = 12'h000;//not-valid pixel
         mem[104] = 12'h068;
         mem[105] = 12'h069;
         mem[106] = 12'h06A;

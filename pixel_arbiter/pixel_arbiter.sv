@@ -48,7 +48,7 @@ module pixel_arbiter
     // delay 1 clock cycle - TBD in future collission detection
     always @(posedge clk) begin
         // at init: clear request for all layers 
-            layer_req <= 4'h0;
+        layer_req <= 4'h0;
         for (i=0; i<NR_OF_BLOBS; i++) begin
             // latch current adress from blob
             latched_address[i] <= address[i];
@@ -106,6 +106,7 @@ module pixel_arbiter
     localparam rd2  = 5'b01000;
     localparam rd3  = 5'b10000;
     
+    // delay 2+4=6 clock cycles
     always @(posedge clk) begin
         if (reset)
             state <= init;
@@ -124,8 +125,21 @@ module pixel_arbiter
         endcase
     end
     
+    // delayed state values
+    logic [4:0] state_d0,state_d1;
+    always @(posedge clk) begin
+        if (reset) begin
+            state_d0 <= init;
+            state_d1 <= init;
+        end else begin
+            state_d0 <= state;
+            state_d1 <= state_d0;
+        end
+    end
+    
     logic [ADD_WIDTH-1:0] rd_add;
-    always @(*) begin
+    // delay = 7 clock cycles
+    always @(posedge clk) begin
         case (state)
         rd3 : rd_add <= layer3_add;
         rd2 : rd_add <= layer2_add;
@@ -135,28 +149,9 @@ module pixel_arbiter
         endcase
     end
     
-    // TBD:
-    // reg [11:0] updating_pixel;
-    // reg state_d0;
-    // always @(posedge clk) begin
-        // if (reset)
-            // state_d0 <= init;
-        // else begin
-            // state_d0 <= state;
-        // case (state_d0)
-            // rd3 : 
-            // rd2 : 
-            // rd1 : 
-            // rd0 : 
-            // default : rd_add <= 0;
-        // endcase
-        // updating_pixel <= rd_data;
-    // end
-    // end
-    
     //TBD: use generate for multiply RAMs?
     // RAM
-    
+    // delay = 8 clock cycles
     logic [11:0] rd_data; // 12-bit pixel
     ram #(
         .ram_width(ADD_WIDTH),
@@ -172,5 +167,32 @@ module pixel_arbiter
         .rd_add(rd_add),
         .rd_data(rd_data)
     );
+    
+    // check read data and choose non-transaparent one from the highest layer
+    logic [11:0] updating_pixel;
+    // flag indicating that pixel was chosen
+    logic pixel_chosen = 0; 
+    
+    
+    // TBD !!!!!!: check the properly delayed/latched requests for all layers
+    //(now it doesn't work properly when some blob is disabled)
+    always @(posedge clk) begin
+        case (state_d1)
+            rd3,rd2,rd1:
+                if ( (rd_data != 12'h000) & (!pixel_chosen) ) begin
+                    updating_pixel <= rd_data;
+                    pixel_chosen <= 1;
+                end
+            rd0: begin
+                if ( (rd_data != 12'h000) & (!pixel_chosen) )
+                    updating_pixel <= rd_data;
+                pixel_chosen <= 0;
+            end
+            default: begin
+                updating_pixel <= background;
+                pixel_chosen <= 0;
+            end
+        endcase
+    end
     
 endmodule

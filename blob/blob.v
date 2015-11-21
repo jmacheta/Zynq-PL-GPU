@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 module blob
 #(       
-    parameter ram_add_width = 16,
+    parameter ram_add_width = 8
 ) 
 (
     // system inputs

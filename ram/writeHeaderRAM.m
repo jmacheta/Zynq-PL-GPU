@@ -1,0 +1,33 @@
+function [ ] = writeHeaderRAM(fileID,ram_width,data_width)
+
+fprintf(fileID,'`timescale 1ns / 1ps                        \n');
+fprintf(fileID,'module ram                                  \n');
+fprintf(fileID,'#(                                          \n');
+fprintf(fileID,'    parameter ram_width = %d,                \n',ram_width);
+fprintf(fileID,'    parameter data_width = %d                 \n',data_width);
+fprintf(fileID,')                                           \n');
+fprintf(fileID,'(       \n');
+fprintf(fileID,'    input rd_clk,\n');
+fprintf(fileID,'    input wr_clk,\n');
+fprintf(fileID,'    input [ram_width-1:0] wr_add,                                     \n');
+fprintf(fileID,'    input [data_width-1:0] wr_data,                                     \n');
+fprintf(fileID,'    input wr_req,                                     \n');
+fprintf(fileID,'    input [ram_width-1:0] rd_add,                 \n');
+fprintf(fileID,'    //input rd_req,\n');
+fprintf(fileID,'    output [data_width-1:0] rd_data                 \n');
+fprintf(fileID,'    );                                      \n');
+fprintf(fileID,'                                            \n');
+fprintf(fileID,'    parameter lut_depth = 1 << ram_width;    \n');
+fprintf(fileID,'    logic [data_width-1:0] mem [lut_depth-1:0];\n');
+fprintf(fileID,'    reg   [data_width-1:0] out_data_reg;\n');
+fprintf(fileID,'                                            \n');
+fprintf(fileID,'    always @(posedge wr_clk)                   \n');
+fprintf(fileID,'        if (wr_req)                         \n');
+fprintf(fileID,'            mem[wr_add] <= wr_data;         \n');
+fprintf(fileID,'                                            \n');
+fprintf(fileID,'    always @(posedge rd_clk)                   \n');
+fprintf(fileID,'        //if (rd_req)                       \n');
+fprintf(fileID,'        out_data_reg <= mem[rd_add];         \n');
+fprintf(fileID,'                                            \n');
+fprintf(fileID,'    assign rd_data = out_data_reg;                \n\n');
+fprintf(fileID,'    initial begin                \n\n');

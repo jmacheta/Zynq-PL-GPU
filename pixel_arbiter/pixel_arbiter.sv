@@ -10,7 +10,7 @@ module pixel_arbiter
     // system inputs
     input clk,  // system clock   
     input reset,    // sycnhronous reset
-        
+    
     // control registers
     // background color
     input [11:0] background,
@@ -28,11 +28,11 @@ module pixel_arbiter
     input        wr_req,
     
     // pixel send to VGA
-    output [11:0] pixel_send
+    output logic [11:0] pixel_send
     
 );
     
-    int i;
+    int i,j;
     
     // capture requests
     // IDs of blobs that send reqest for specific layer
@@ -74,13 +74,27 @@ module pixel_arbiter
         end                
     end
     
+    // delay 'layer_req' register value
+    localparam delay = 6;
+    logic [3:0] layer_req_srl[delay-1:0];
+    
+    initial begin
+        for (j=0; j <delay; j++)
+            layer_req_srl[j] <= 0;
+    end
+    
+    always @(posedge clk) begin
+        layer_req_srl[0] <= layer_req;
+        for (j=1; j <delay; j++)
+            layer_req_srl[j] <= layer_req_srl[j-1];
+    end
+    
     // capture address of pixels for all layers
-    logic [ADD_WIDTH-1:0] layer0_add;  //TBD for all - add length
+    logic [ADD_WIDTH-1:0] layer0_add;
     logic [ADD_WIDTH-1:0] layer1_add;
     logic [ADD_WIDTH-1:0] layer2_add;
     logic [ADD_WIDTH-1:0] layer3_add;
     // delayed values of requests
-    // logic layer_req_d0[3:0] = {0,0,0,0}; //TBD
     
     // delay 2 clock cycles
     always @(posedge clk) begin
@@ -126,14 +140,16 @@ module pixel_arbiter
     end
     
     // delayed state values
-    logic [4:0] state_d0,state_d1;
+    logic [4:0] state_d0,state_d1,state_d2;
     always @(posedge clk) begin
         if (reset) begin
             state_d0 <= init;
             state_d1 <= init;
+            state_d2 <= init;
         end else begin
             state_d0 <= state;
             state_d1 <= state_d0;
+            state_d2 <= state_d1;
         end
     end
     
@@ -167,32 +183,49 @@ module pixel_arbiter
         .rd_add(rd_add),
         .rd_data(rd_data)
     );
-    
-    // check read data and choose non-transaparent one from the highest layer
+        
+    // check read data and choose non-transaparent one from the highest layer that send request (or background)
     logic [11:0] updating_pixel;
     // flag indicating that pixel was chosen
     logic pixel_chosen = 0; 
     
-    
-    // TBD !!!!!!: check the properly delayed/latched requests for all layers
-    //(now it doesn't work properly when some blob is disabled)
+    // note: possible need for fixes in sense of timing closure
     always @(posedge clk) begin
         case (state_d1)
-            rd3,rd2,rd1:
-                if ( (rd_data != 12'h000) & (!pixel_chosen) ) begin
+            rd3:
+                if ( (rd_data != 12'h000) & (!pixel_chosen) & layer_req_srl[delay-4][3] ) begin
+                    updating_pixel <= rd_data;
+                    pixel_chosen <= 1;
+                end
+            rd2:
+                if ( (rd_data != 12'h000) & (!pixel_chosen) & layer_req_srl[delay-3][2] ) begin
+                    updating_pixel <= rd_data;
+                    pixel_chosen <= 1;
+                end
+            rd1:
+                if ( (rd_data != 12'h000) & (!pixel_chosen) & layer_req_srl[delay-2][1] ) begin
                     updating_pixel <= rd_data;
                     pixel_chosen <= 1;
                 end
             rd0: begin
-                if ( (rd_data != 12'h000) & (!pixel_chosen) )
+                if ( (rd_data != 12'h000) & (!pixel_chosen) & layer_req_srl[delay-1][0])
                     updating_pixel <= rd_data;
+                else if (!pixel_chosen)
+                    updating_pixel <= background;
                 pixel_chosen <= 0;
+                
             end
             default: begin
                 updating_pixel <= background;
                 pixel_chosen <= 0;
             end
         endcase
+    end
+    
+    // finally send pixel
+    always @(posedge clk) begin
+        if (state_d2 == rd0)
+            pixel_send <= updating_pixel;
     end
     
 endmodule

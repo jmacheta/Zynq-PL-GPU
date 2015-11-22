@@ -95,7 +95,7 @@ module blob_tb();
     blob2 (
         .clk              (clk          ),
         .clk25en          (en25         ),
-        .sprite_enable    (sprite_enable[1]),
+        .sprite_enable    (sprite_enable[2]),
         .y1_pos           (y1_pos[2]       ),
         .x1_pos           (x1_pos[2]       ),
         .y2_pos           (y2_pos[2]       ),
@@ -114,7 +114,7 @@ module blob_tb();
     blob3 (
         .clk              (clk          ),
         .clk25en          (en25         ),
-        .sprite_enable    (sprite_enable[1]),
+        .sprite_enable    (sprite_enable[3]),
         .y1_pos           (y1_pos[3]       ),
         .x1_pos           (x1_pos[3]       ),
         .y2_pos           (y2_pos[3]       ),
@@ -193,9 +193,7 @@ module blob_tb();
         x2_pos[2] <= 6;
         y2_pos[2] <= 7;
         address_in[2] <= 100;
-        
-        clk = 1;
-        blank = 0;
+
         sprite_enable[3] = 0;
         layer_in[3] = 0;
         x1_pos[3] <= 3;
@@ -210,7 +208,7 @@ module blob_tb();
 
         #(2*clk_period);
         sprite_enable[0] = 1;
-        sprite_enable[1] = 1;
+        sprite_enable[1] = 0;
         sprite_enable[2] = 1;
         sprite_enable[3] = 1;
         #(2*2*2*10*2048*clk_period);

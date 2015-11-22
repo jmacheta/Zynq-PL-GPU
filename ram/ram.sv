@@ -31,7 +31,7 @@ module ram
 
     initial begin                
 
-        mem[0] = 12'h000;
+        mem[0] = 12'h00A;// valid pixel
         mem[1] = 12'h001;
         mem[2] = 12'h002;
         mem[3] = 12'h003;

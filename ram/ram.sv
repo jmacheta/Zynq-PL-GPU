@@ -15,7 +15,7 @@ module ram
     output [data_width-1:0] rd_data                 
     );                                      
                                             
-    parameter lut_depth = 1 << ram_width;    
+    localparam lut_depth = 1 << ram_width;    
     logic [data_width-1:0] mem [lut_depth-1:0];
     reg   [data_width-1:0] out_data_reg;
                                             

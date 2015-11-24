@@ -70,13 +70,11 @@ module blob
     // horizontal condition
     wire x_cond = (curr_x_pos >= x1_pos_latched) && (curr_x_pos <= x2_pos_latched);
     
-    // delay = 1 clock cycle
     always @(posedge clk) begin
         position_cond <=  x_cond && y_cond && !blank;
     end
     
     // request generation (to pixel arbiter)
-    // delay = 3 clock cycles
     always @(posedge clk) begin 
         if (sprite_enable && position_cond && clk25en)  // generate 1 request per 4 cc of pixel time
             request <= 1;

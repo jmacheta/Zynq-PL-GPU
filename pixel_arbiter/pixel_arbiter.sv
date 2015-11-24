@@ -45,33 +45,36 @@ module pixel_arbiter
     // latched addresses of current pixel from blobs
     logic [ADD_WIDTH-1:0] latched_address [NR_OF_BLOBS-1:0];
     
-    // delay 1 clock cycle - TBD in future collission detection
     always @(posedge clk) begin
-        // at init: clear request for all layers 
-        layer_req <= 4'h0;
-        for (i=0; i<NR_OF_BLOBS; i++) begin
-            // latch current adress from blob
-            latched_address[i] <= address[i];
-            if (request[i])
-                case (layer[i])
-                    2'b00: begin
-                        layer0_blob_id <= i;
-                        layer_req[0] <= 1;
-                    end
-                    2'b01: begin
-                        layer1_blob_id <= i;
-                        layer_req[1] <= 1;
-                    end
-                    2'b10: begin
-                        layer2_blob_id <= i;
-                        layer_req[2] <= 1;
-                    end
-                    2'b11: begin
-                        layer3_blob_id <= i;
-                        layer_req[3] <= 1;
-                    end
-                endcase            
-        end                
+        if (reset) begin
+            layer_req <= 4'h0;
+        end else begin
+            // at init: clear request for all layers 
+            layer_req <= 4'h0;
+            for (i=0; i<NR_OF_BLOBS; i++) begin
+                // latch current adress from blob
+                latched_address[i] <= address[i];
+                if (request[i])
+                    case (layer[i])
+                        2'b00: begin
+                            layer0_blob_id <= i;
+                            layer_req[0] <= 1;
+                        end
+                        2'b01: begin
+                            layer1_blob_id <= i;
+                            layer_req[1] <= 1;
+                        end
+                        2'b10: begin
+                            layer2_blob_id <= i;
+                            layer_req[2] <= 1;
+                        end
+                        2'b11: begin
+                            layer3_blob_id <= i;
+                            layer_req[3] <= 1;
+                        end
+                    endcase            
+            end  
+        end
     end
     
     // delay 'layer_req' register value
@@ -94,9 +97,7 @@ module pixel_arbiter
     logic [ADD_WIDTH-1:0] layer1_add;
     logic [ADD_WIDTH-1:0] layer2_add;
     logic [ADD_WIDTH-1:0] layer3_add;
-    // delayed values of requests
     
-    // delay 2 clock cycles
     always @(posedge clk) begin
         if (layer_req!= 4'h0) begin
             layer0_add <= latched_address[layer0_blob_id];
@@ -120,7 +121,6 @@ module pixel_arbiter
     localparam rd2  = 5'b01000;
     localparam rd3  = 5'b10000;
     
-    // delay 2+4=6 clock cycles
     always @(posedge clk) begin
         if (reset)
             state <= init;
@@ -154,7 +154,6 @@ module pixel_arbiter
     end
     
     logic [ADD_WIDTH-1:0] rd_add;
-    // delay = 7 clock cycles
     always @(posedge clk) begin
         case (state)
         rd3 : rd_add <= layer3_add;
@@ -167,7 +166,6 @@ module pixel_arbiter
     
     //TBD: use generate for multiply RAMs?
     // RAM
-    // delay = 8 clock cycles
     logic [11:0] rd_data; // 12-bit pixel
     ram #(
         .ram_width(ADD_WIDTH),
@@ -188,8 +186,8 @@ module pixel_arbiter
     logic [11:0] updating_pixel;
     // flag indicating that pixel was chosen
     logic pixel_chosen = 0; 
-    
-    // note: possible need for fixes in sense of timing closure
+
+    // note: possible need for fixes in sense of timing closure (for example: update flag + rd_data delayed)
     always @(posedge clk) begin
         case (state_d1)
             rd3:
@@ -224,6 +222,8 @@ module pixel_arbiter
     
     // finally send pixel
     always @(posedge clk) begin
+        if (state_d2 == init)
+            pixel_send <= background;
         if (state_d2 == rd0)
             pixel_send <= updating_pixel;
     end

@@ -14,7 +14,7 @@ module gpu
     // blobs' settings:
     // enable sprite  (show it on screen)
     input logic sprite_enable [NR_OF_BLOBS-1:0],    
-    // postion on the screen (y - vertical, x - horizontal)
+    // position on the screen (y - vertical, x - horizontal)
     input logic [9:0] y1_pos [NR_OF_BLOBS-1:0],
     input logic [9:0] x1_pos [NR_OF_BLOBS-1:0],
     input logic [9:0] y2_pos [NR_OF_BLOBS-1:0],
@@ -52,8 +52,8 @@ module gpu
     wire [9:0] curr_x_pos;
     wire h_sync_mod;
     wire v_sync_mod;
-    
     wire blank;
+
     
     genvar i;
     generate

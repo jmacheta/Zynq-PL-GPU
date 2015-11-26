@@ -53,7 +53,8 @@ module gpu
     wire h_sync_mod;
     wire v_sync_mod;
     wire blank;
-
+    wire [11:0] pixel_from_arbiter;
+    wire blank_delayed;
     
     genvar i;
     generate
@@ -95,7 +96,7 @@ module gpu
         .wr_add                             (wr_add ),
         .wr_data                            (wr_data),
         .wr_req                             (wr_req ),
-        .pixel_send                         (pixel_send)
+        .pixel_send                         (pixel_from_arbiter)
     );
 
     sync_mod sync_mod_i(
@@ -128,6 +129,18 @@ module gpu
         .data_in    (h_sync_mod),
         .data_out   (h_sync)
     );    
+
+    delay #(
+        .delay_length(13),
+        .data_width(1)
+    ) delay_blank
+    (
+        .clk        (clk),
+        .data_in    (blank),
+        .data_out   (blank_delayed)
+    );  
+    
+    assign pixel_send = (blank_delayed) ? 12'h000 : pixel_from_arbiter;
     
     // ////////////////////////////////////
     // // for simulation purposes only!!!

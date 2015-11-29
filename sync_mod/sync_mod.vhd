@@ -45,7 +45,7 @@ architecture behavioral of sync_mod is
     -- Video_on_off
     signal sblank : std_logic;
     
-    signal DIVIDER: std_logic_vector(1 downto 0);	-- internal divider register 
+    signal DIVIDER: std_logic_vector(1 downto 0) := "00";	-- internal divider register 
     constant divide_factor: integer := 4;			-- divide factor user constant
     signal EN : std_logic;
     

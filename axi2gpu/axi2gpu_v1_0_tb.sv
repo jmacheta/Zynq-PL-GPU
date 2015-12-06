@@ -85,38 +85,15 @@ module gpu_tb();
         s00_axi_aresetn = 1;
         # (20 * clk_period);
         
-        // @(posedge s00_axi_aclk);
-        // s00_axi_wvalid = '1;
-        // s00_axi_awaddr = '0;
-        // s00_axi_awvalid = '1;
-        // s00_axi_wstrb = '1;
-        // s00_axi_wdata = 32'h00000ABC;
-        // @(posedge s00_axi_aclk);
-        // @(posedge s00_axi_aclk);
-        // @(posedge s00_axi_aclk);
-        // s00_axi_wstrb = '0;
-        // @(posedge s00_axi_aclk);
-        
         axi_write(0,32'h00000ABC);
         
-        // BLOB 0
-        // register2
-        //      9:0     y1_pos = 50
-        //      19:10   x1_pos = 40
-        //      29:20   y2_pos = 52
-        // register3
-        //      9:0     x2_pos
-        //      11:10   layer
-        // register4
-        //      ram_add_width-1:0   start address in memory = 0
-        
-        axi_write(2,{2'd0,10'd52,10'd40,10'd50});
-        axi_write(3,{22'd3,10'd45});
-        axi_write(4,0);
+        axi_write(4,{2'd0,10'd52,10'd40,10'd50});
+        axi_write(5,{22'd3,10'd45});
+        axi_write(6,0);
         
         // register1
         //      3:0 - enable sprite (all sprites in one register)
-        axi_write(1,1);
+        axi_write(3,1);
         
         // # (5000*1000 * clk_period);
         // $stop;

@@ -612,110 +612,37 @@
 
     // Add user logic here
     localparam ram_add_width = 16;
-    wire wr_req =  (slv_reg_wren) & (axi_awaddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB]== 5'h12);
+    wire wr_req =  (slv_reg_wren) & (axi_awaddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB]== 5'h2);
     
-    // registers description (name, bits, description):
-    // register0
-    //      11:0 - background
-    // register1
-    //      3:0 - enable sprite (all sprites in one register)
-    // BLOB 0
-    // register2
-    //      9:0     y1_pos
-    //      19:10   x1_pos
-    //      29:20   y2_pos
-    // register3
-    //      9:0     x2_pos
-    //      11:10   layer
-    // register4
-    //      ram_add_width-1:0   start address in memory
-    // BLOB 1
-    // register5
-    //      9:0     y1_pos
-    //      19:10   x1_pos
-    //      29:20   y2_pos
-    // register6
-    //      9:0     x2_pos
-    //      11:10   layer
-    // register7
-    //      ram_add_width-1:0   start address in memory    
-    // BLOB 2
-    // register8
-    //      9:0     y1_pos
-    //      19:10   x1_pos
-    //      29:20   y2_pos
-    // register9
-    //      9:0     x2_pos
-    //      11:10   layer
-    // register10
-    //      ram_add_width-1:0   start address in memory    
-    // BLOB 3
-    // register11
-    //      9:0     y1_pos
-    //      19:10   x1_pos
-    //      29:20   y2_pos
-    // register12
-    //      9:0     x2_pos
-    //      11:10   layer
-    // register13
-    //      ram_add_width-1:0   start address in memory   
-    // RAM MEMORY
-    // register17
-    //      ram_add_width-1:0   write address   
-    // register18
-    //      11:0    write data
-    
-    
-    gpu_wrapper #(
-        .ram_add_width (ram_add_width),
-        .NR_OF_BLOBS   (4)
-    ) gpu_wrapper_i
-    (
-        .clk              (S_AXI_ACLK                   ),
-        .reset            (!S_AXI_ARESETN               ),
-        .background       (slv_reg0[11:0]               ),
-        // BLOB 0               
-        .sprite_enable0   (slv_reg1[0]                  ),         
-        .y1_pos0          (slv_reg2[9:0]                ),
-        .x1_pos0          (slv_reg2[19:10]              ),
-        .y2_pos0          (slv_reg2[29:20]              ),
-        .x2_pos0          (slv_reg3[9:0]                ),
-        .layer0           (slv_reg3[11:10]              ),
-        .ram_address0     (slv_reg4[ram_add_width-1:0]  ),
-        // BLOB 1               
-        .sprite_enable1   (slv_reg1[1]                  ), 
-        .y1_pos1          (slv_reg5[9:0]                ),       
-        .x1_pos1          (slv_reg5[19:10]              ),
-        .y2_pos1          (slv_reg5[29:20]              ),
-        .x2_pos1          (slv_reg6[9:0]                ),
-        .layer1           (slv_reg6[11:10]              ),
-        .ram_address1     (slv_reg7[ram_add_width-1:0]  ),
-        // BLOB 2               
-        .sprite_enable2   (slv_reg1[2]                   ), 
-        .y1_pos2          (slv_reg8[9:0]                ),        
-        .x1_pos2          (slv_reg8[19:10]              ),
-        .y2_pos2          (slv_reg8[29:20]              ),
-        .x2_pos2          (slv_reg9[9:0]                ),
-        .layer2           (slv_reg9[11:10]              ),
-        .ram_address2     (slv_reg10[ram_add_width-1:0]  ),
-        // BLOB 3               
-        .sprite_enable3   (slv_reg1[3]                   ), 
-        .y1_pos3          (slv_reg11[9:0]                ),        
-        .x1_pos3          (slv_reg11[19:10]              ),
-        .y2_pos3          (slv_reg11[29:20]              ),
-        .x2_pos3          (slv_reg12[9:0]                ),
-        .layer3           (slv_reg12[11:10]              ),
-        .ram_address3     (slv_reg13[ram_add_width-1:0]  ),        
-        
-        .wr_add           (slv_reg17[ram_add_width-1:0]  ),
-        .wr_data          (slv_reg18[11:0]               ),
-        .wr_req           (wr_req                        ),
-        .pixel_send       (pixel_send                    ),
-        .v_sync           (v_sync                        ),
-        .h_sync           (h_sync                        )
-    );
-    
-    
+    gpu_wrapper #(                                             
+            .ram_add_width (ram_add_width),                    
+            .NR_OF_BLOBS   (4)                                
+        ) gpu_wrapper_i                                        
+        (                                                      
+            .clk              (S_AXI_ACLK    ), 
+            .reset            (!S_AXI_ARESETN), 
+            .slv_reg0        (slv_reg0     ), 
+            .slv_reg1        (slv_reg1     ), 
+            .slv_reg2        (slv_reg2     ), 
+            .slv_reg3        (slv_reg3     ), 
+            .slv_reg4        (slv_reg4     ), 
+            .slv_reg5        (slv_reg5     ), 
+            .slv_reg6        (slv_reg6     ), 
+            .slv_reg7        (slv_reg7     ), 
+            .slv_reg8        (slv_reg8     ), 
+            .slv_reg9        (slv_reg9     ), 
+            .slv_reg10        (slv_reg10     ), 
+            .slv_reg11        (slv_reg11     ), 
+            .slv_reg12        (slv_reg12     ), 
+            .slv_reg13        (slv_reg13     ), 
+            .slv_reg14        (slv_reg14     ), 
+            .slv_reg15        (slv_reg15     ), 
+            .wr_req           (wr_req        ),
+            .pixel_send       (pixel_send    ),
+            .v_sync           (v_sync        ),
+            .h_sync           (h_sync        ) 
+        );
+
     // User logic ends
 
     endmodule

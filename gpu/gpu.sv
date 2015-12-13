@@ -17,8 +17,8 @@ module gpu
     // position on the screen (y - vertical, x - horizontal)
     input logic [9:0] y1_pos [NR_OF_BLOBS-1:0],
     input logic [9:0] x1_pos [NR_OF_BLOBS-1:0],
-    input logic [9:0] y2_pos [NR_OF_BLOBS-1:0],
-    input logic [9:0] x2_pos [NR_OF_BLOBS-1:0],
+    input logic [9:0] height [NR_OF_BLOBS-1:0],
+    input logic [9:0] width [NR_OF_BLOBS-1:0],
     // start address in RAM, TBD MSBs are nr of BRAM
     input logic [ram_add_width-1:0] ram_address [NR_OF_BLOBS-1:0],
     input logic [1:0]  layer [NR_OF_BLOBS-1:0],
@@ -66,8 +66,8 @@ module gpu
                 .sprite_enable    (sprite_enable[i] ),
                 .y1_pos           (y1_pos       [i] ),
                 .x1_pos           (x1_pos       [i] ),
-                .y2_pos           (y2_pos       [i] ),
-                .x2_pos           (x2_pos       [i] ),
+                .height           (height       [i] ),
+                .width            (width       [i] ),
                 .address_in       (ram_address  [i] ),
                 .layer_in         (layer        [i] ),
                 .layer_out        (blob_layer   [i] ), 

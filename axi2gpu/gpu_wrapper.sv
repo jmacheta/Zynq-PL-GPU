@@ -41,8 +41,8 @@ module gpu_wrapper
     logic sprite_enable [NR_OF_BLOBS-1:0];                  
     logic [9:0] y1_pos  [NR_OF_BLOBS-1:0];                  
     logic [9:0] x1_pos  [NR_OF_BLOBS-1:0];                  
-    logic [9:0] y2_pos  [NR_OF_BLOBS-1:0];                  
-    logic [9:0] x2_pos  [NR_OF_BLOBS-1:0];                  
+    logic [9:0] height  [NR_OF_BLOBS-1:0];                  
+    logic [9:0] width  [NR_OF_BLOBS-1:0];                  
     logic [ram_add_width-1:0] ram_address [NR_OF_BLOBS-1:0];
     logic [1:0]  layer [NR_OF_BLOBS-1:0];                   
     logic [11:0] background;                                
@@ -60,8 +60,8 @@ module gpu_wrapper
         .sprite_enable    (sprite_enable),                  
         .y1_pos           (y1_pos       ),                  
         .x1_pos           (x1_pos       ),                  
-        .y2_pos           (y2_pos       ),                  
-        .x2_pos           (x2_pos       ),                  
+        .height           (height       ),                  
+        .width            (width       ),                  
         .ram_address      (ram_address  ),                  
         .layer            (layer        ),                  
         .wr_add           (wr_add       ),                  
@@ -83,8 +83,8 @@ module gpu_wrapper
     assign  sprite_enable[0] = slv_reg3[0];
     assign         y1_pos[0] = slv_reg4[9:0];
     assign         x1_pos[0] = slv_reg4[19:10];
-    assign         y2_pos[0] = slv_reg4[29:20];
-    assign         x2_pos[0] = slv_reg5[9:0];
+    assign         height[0] = slv_reg4[29:20];
+    assign         width[0] = slv_reg5[9:0];
     assign          layer[0] = slv_reg5[11:10];
     assign    ram_address[0] = slv_reg6[ram_add_width-1:0];
 
@@ -92,8 +92,8 @@ module gpu_wrapper
     assign  sprite_enable[1] = slv_reg3[1];
     assign         y1_pos[1] = slv_reg7[9:0];
     assign         x1_pos[1] = slv_reg7[19:10];
-    assign         y2_pos[1] = slv_reg7[29:20];
-    assign         x2_pos[1] = slv_reg8[9:0];
+    assign         height[1] = slv_reg7[29:20];
+    assign         width[1] = slv_reg8[9:0];
     assign          layer[1] = slv_reg8[11:10];
     assign    ram_address[1] = slv_reg9[ram_add_width-1:0];
 
@@ -101,8 +101,8 @@ module gpu_wrapper
     assign  sprite_enable[2] = slv_reg3[2];
     assign         y1_pos[2] = slv_reg10[9:0];
     assign         x1_pos[2] = slv_reg10[19:10];
-    assign         y2_pos[2] = slv_reg10[29:20];
-    assign         x2_pos[2] = slv_reg11[9:0];
+    assign         height[2] = slv_reg10[29:20];
+    assign         width[2] = slv_reg11[9:0];
     assign          layer[2] = slv_reg11[11:10];
     assign    ram_address[2] = slv_reg12[ram_add_width-1:0];
 
@@ -110,8 +110,8 @@ module gpu_wrapper
     assign  sprite_enable[3] = slv_reg3[3];
     assign         y1_pos[3] = slv_reg13[9:0];
     assign         x1_pos[3] = slv_reg13[19:10];
-    assign         y2_pos[3] = slv_reg13[29:20];
-    assign         x2_pos[3] = slv_reg14[9:0];
+    assign         height[3] = slv_reg13[29:20];
+    assign         width[3] = slv_reg14[9:0];
     assign          layer[3] = slv_reg14[11:10];
     assign    ram_address[3] = slv_reg15[ram_add_width-1:0];
 
